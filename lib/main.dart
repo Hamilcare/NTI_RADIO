@@ -11,23 +11,18 @@ class ExampleApp extends StatefulWidget {
 }
 
 class _ExampleAppState extends State<ExampleApp> {
-  final String url = "http://streaming.radionti.com/nti-hd.mp3";
+  static final  String url_192 = "http://streaming.radionti.com/nti-hd.mp3";
+  static final String url_128 = "http://streaming.radionti.com/nti-128.mp3";
+  static final String url_320 = "http://streaming.radionti.com/nti-320.mp3";
+  
+  String currentUrl = url_192;
   Audio audio;
   bool _isPlaying = false;
-  @override
-  initState() {
-    super.initState();
-    audio = new Audio(
-      audioUrl: url,
-      playerBuilder: (BuildContext context, AudioPlayer player, Widget child) {
-        return audioPlayer(player);
-      },
-    ); 
-  }
-  
+
   @override
   void dispose() {
     audio = null;
+    super.dispose();
   }
 
   Audio fetchMusicPlayer() {
@@ -35,16 +30,14 @@ class _ExampleAppState extends State<ExampleApp> {
   }
 
   Widget audioPlayer(AudioPlayer player) {
-    player.loadMedia(Uri.parse(url));
-    
+    player.loadMedia(Uri.parse(currentUrl));
+
     return Center(
-      child:
-      ListTile(
+        child: ListTile(
       title: Icon(
         _isPlaying ? Icons.stop : Icons.play_arrow,
         size: 150,
         // color: alreadySaved ? Colors.red : null,
-        
       ),
       onTap: () {
         setState(() {
@@ -53,128 +46,26 @@ class _ExampleAppState extends State<ExampleApp> {
           } else {
             player.play();
           }
-          _isPlaying = ! _isPlaying;
+          _isPlaying = !_isPlaying;
         });
       },
-      
     ));
   }
 
   @override
   Widget build(BuildContext context) {
+    
     return Material(
       child: Scaffold(
         body: Container(
-          child: fetchMusicPlayer(),
-        ),
+            child: new Audio(
+          audioUrl: currentUrl,
+          playerBuilder:
+              (BuildContext context, AudioPlayer player, Widget child) {
+            return audioPlayer(player);
+          },
+        )),
       ),
     );
   }
 }
-
-// import 'package:flutter/material.dart';
-// import 'package:english_words/english_words.dart';
-
-// void main() => runApp(MyApp());
-
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Startup Name Generator',
-//       home: RandomWords(),
-//     );
-//   }
-// }
-
-// class RandomWords extends StatefulWidget {
-//   @override
-//   RandomWordsState createState() => RandomWordsState();
-// }
-
-// class RandomWordsState extends State<RandomWords> {
-//   final _suggestions = <WordPair>[];
-//   final _biggerFont = const TextStyle(fontSize: 18.0);
-//   final Set<WordPair> _saved = Set<WordPair>();
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Startup Name Generator'),
-//         actions: <Widget>[
-//           // Add 3 lines from here...
-//           IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
-//         ], // ... to here.
-//       ),
-//       body: _buildSuggestions(),
-//     );
-//   }
-
-//   void _pushSaved() {
-//     Navigator.of(context).push(
-//       MaterialPageRoute<void>(
-//         builder: (BuildContext context) {
-//           final Iterable<ListTile> tiles = _saved.map(
-//             (WordPair pair) {
-//               return ListTile(
-//                 title: Text(
-//                   pair.asPascalCase,
-//                   style: _biggerFont,
-//                 ),
-//               );
-//             },
-//           );
-//           final List<Widget> divided = ListTile.divideTiles(
-//             context: context,
-//             tiles: tiles,
-//           ).toList();
-//           return Scaffold(
-//             // Add 6 lines from here...
-//             appBar: AppBar(
-//               title: Text('Saved Suggestions'),
-//             ),
-//             body: ListView(children: divided),
-//           );
-//         },
-//       ),
-//     );
-//   }
-
-//   Widget _buildSuggestions() {
-//     return ListView.builder(
-//         padding: const EdgeInsets.all(16.0),
-//         itemBuilder: /*1*/ (context, i) {
-//           if (i.isOdd) return Divider(); /*2*/
-
-//           final index = i ~/ 2; /*3*/
-//           if (index >= _suggestions.length) {
-//             _suggestions.addAll(generateWordPairs().take(10)); /*4*/
-//           }
-//           return _buildRow(_suggestions[index]);
-//         });
-//   }
-
-//   Widget _buildRow(WordPair pair) {
-//     final bool alreadySaved = _saved.contains(pair);
-//     return ListTile(
-//       title: Text(
-//         pair.asPascalCase,
-//         style: _biggerFont,
-//       ),
-//       trailing: Icon(
-//         alreadySaved ? Icons.favorite : Icons.favorite_border,
-//         color: alreadySaved ? Colors.red : null,
-//       ),
-//       onTap: () {
-//         setState(() {
-//           if (alreadySaved) {
-//             _saved.remove(pair);
-//           } else {
-//             _saved.add(pair);
-//           }
-//         });
-//       },
-//     );
-//   }
-// }
